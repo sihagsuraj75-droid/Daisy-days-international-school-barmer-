@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daisy Days International School | Barmer | 3D Experience</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a192f',
+                            primary: '#1e3a8a',
+                            light: '#3b82f6',
+                            gold: '#fbbf24',
+                            accent: '#e11d48'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* 3D Canvas Container */
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a192f 0%, #1e3a8a 100%);
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glass-dark {
+            background: rgba(10, 25, 47, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(30, 58, 138, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3a8a;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0a192f;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased">
+
+    <!-- Top Info Bar -->
+    <div class="bg-brand-dark text-gray-300 text-xs md:text-sm py-2 px-4 relative z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex space-x-6">
+                <span><i class="fas fa-phone-alt mr-2 text-brand-gold"></i> +91 9460227273 / 8890230875</span>
+                <span class="hidden sm:inline"><i class="fas fa-map-marker-alt mr-2 text-brand-gold"></i> NH-68, Baldev Nagar, Barmer</span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-white transition"><i class="fab fa-youtube"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 top-[36px]" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary to-brand-light flex items-center justify-center text-white font-bold text-xl shadow-lg transform group-hover:rotate-12 transition duration-300">
+                        DD
+                    </div>
+                    <div class="flex flex-col text-white transition-colors duration-300" id="nav-text">
+                        <span class="font-serif font-bold text-xl md:text-2xl leading-tight tracking-wide">Daisy Days</span>
+                        <span class="text-[10px] md:text-xs font-semibold uppercase tracking-widest text-brand-gold">International School</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link text-white hover:text-brand-gold font-medium transition">Home</a>
+                    <a href="#about" class="nav-link text-white hover:text-brand-gold font-medium transition">About</a>
+                    <a href="#academics" class="nav-link text-white hover:text-brand-gold font-medium transition">Academics</a>
+                    <a href="#gallery" class="nav-link text-white hover:text-brand-gold font-medium transition">Campus</a>
+                    <a href="#contact" class="bg-brand-gold text-brand-dark px-6 py-2.5 rounded-full font-bold shadow-[0_0_15px_rgba(251,191,36,0.4)] hover:shadow-[0_0_25px_rgba(251,191,36,0.6)] hover:scale-105 transition-all">
+                        Admissions
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-white hover:text-brand-gold focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl border-t border-gray-100 pb-6">
+            <div class="flex flex-col px-6 pt-4 space-y-4">
+                <a href="#home" class="text-brand-dark font-medium text-lg hover:text-brand-primary">Home</a>
+                <a href="#about" class="text-brand-dark font-medium text-lg hover:text-brand-primary">About Us</a>
+                <a href="#academics" class="text-brand-dark font-medium text-lg hover:text-brand-primary">Academics</a>
+                <a href="#gallery" class="text-brand-dark font-medium text-lg hover:text-brand-primary">Campus</a>
+                <a href="#contact" class="bg-brand-primary text-white text-center py-3 rounded-xl font-bold mt-4 shadow-lg">Admissions Open</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3D Hero Section -->
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Three.js Canvas Container -->
+        <div id="canvas-container"></div>
+        
+        <!-- Overlay Gradient to ensure text is readable -->
+        <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/40 via-transparent to-brand-dark/90 z-10 pointer-events-none"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-20 max-w-7xl mx-auto px-4 w-full flex flex-col items-center text-center mt-16">
+            
+            <div class="glass px-6 py-2 rounded-full mb-8 animate-float inline-flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                <span class="text-white text-sm font-medium tracking-widest uppercase">CBSE Affiliated Institution</span>
+            </div>
+
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 drop-shadow-2xl leading-tight">
+                Empowering <br>
+                <span class="text-gradient">Tomorrow's Leaders</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-200 font-light mb-10 max-w-3xl drop-shadow-lg">
+                Excellence in education right here in Barmer. Fostering modern skills while rooted in traditional values.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
+                <a href="#about" class="group relative px-8 py-4 bg-white text-brand-primary font-bold rounded-full overflow-hidden shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all hover:scale-105">
+                    <span class="relative z-10 flex items-center justify-center gap-2">
+                        Explore Campus <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </a>
+                <a href="#contact" class="px-8 py-4 bg-transparent border-2 border-brand-gold text-brand-gold font-bold rounded-full hover:bg-brand-gold hover:text-brand-dark transition-all shadow-[0_0_20px_rgba(251,191,36,0.2)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)]">
+                    Contact Admissions
+                </a>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/50 animate-bounce">
+                <i class="fas fa-chevron-down text-2xl"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats / Highlights -->
+    <section class="relative z-30 -mt-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card grid grid-cols-2 md:grid-cols-4 gap-6 p-8 relative overflow-hidden">
+            <!-- Decorative blur blob -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-400 rounded-full mix-blend-multiply filter blur-2xl opacity-20"></div>
+            
+            <div class="text-center p-4 border-r border-gray-100 last:border-0 md:last:border-r-0">
+                <div class="text-4xl text-brand-primary mb-2"><i class="fas fa-graduation-cap"></i></div>
+                <h3 class="font-bold text-2xl text-gray-800">Nursery to 12th</h3>
+                <p class="text-gray-500 text-sm">Comprehensive Classes</p>
+            </div>
+            <div class="text-center p-4 border-r border-gray-100 md:border-r">
+                <div class="text-4xl text-brand-primary mb-2"><i class="fas fa-book-open"></i></div>
+                <h3 class="font-bold text-2xl text-gray-800">CBSE</h3>
+                <p class="text-gray-500 text-sm">Curriculum</p>
+            </div>
+            <div class="text-center p-4 border-r border-gray-100 last:border-0">
+                <div class="text-4xl text-brand-primary mb-2"><i class="fas fa-laptop-house"></i></div>
+                <h3 class="font-bold text-2xl text-gray-800">Smart Labs</h3>
+                <p class="text-gray-500 text-sm">Modern Infrastructure</p>
+            </div>
+            <div class="text-center p-4">
+                <div class="text-4xl text-brand-primary mb-2"><i class="fas fa-users"></i></div>
+                <h3 class="font-bold text-2xl text-gray-800">24:1</h3>
+                <p class="text-gray-500 text-sm">Student-Teacher Ratio</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 bg-white relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-gray-50 transform skew-x-12 translate-x-20 z-0"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Text Content -->
+                <div class="reveal">
+                    <div class="inline-block bg-blue-50 text-brand-primary font-bold px-4 py-2 rounded-lg text-sm mb-4 tracking-widest uppercase border border-blue-100">
+                        Managed by Jahanvi Sansthan
+                    </div>
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold text-brand-dark mb-6 leading-tight">
+                        A Legacy of <br><span class="text-brand-primary">Quality Education</span>
+                    </h2>
+                    <p class="text-gray-600 text-lg mb-6 leading-relaxed">
+                        Situated prominently on NH-68 in Baldev Nagar, Barmer, <strong>Daisy Days International School</strong> has been a beacon of learning since 2015. We are dedicated to providing a vibrant, secure, and technologically advanced environment for children.
+                    </p>
+                    <p class="text-gray-600 text-lg mb-8 leading-relaxed">
+                        Our renowned "House" program focuses on holistic development—instilling teamwork, self-reliance, and leadership through academics, sports, and cultural activities like drama and debate.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-brand-primary text-xl">
+                                <i class="fas fa-flask"></i>
+                            </div>
+                            <span class="font-bold text-gray-800">Science Labs</span>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-brand-primary text-xl">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <span class="font-bold text-gray-800">Language Labs</span>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-brand-primary text-xl">
+                                <i class="fas fa-running"></i>
+                            </div>
+                            <span class="font-bold text-gray-800">Sports Complex</span>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-brand-primary text-xl">
+                                <i class="fas fa-bus"></i>
+                            </div>
+                            <span class="font-bold text-gray-800">Transport Facility</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive 3D Image Card Layout -->
+                <div class="relative reveal">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-brand-primary to-brand-light rounded-[2rem] transform rotate-3 scale-105 opacity-20 blur-lg"></div>
+                    
+                    <!-- PLACE REAL IMAGE URLs HERE -->
+                    <div class="relative bg-white p-2 rounded-[2rem] shadow-2xl z-10 transform transition-transform hover:-translate-y-2 duration-500">
+                        <img src="https://placehold.co/800x1000/1e3a8a/ffffff?text=Replace+With+Real+School+Photo" alt="Daisy Days Campus" class="w-full h-auto rounded-[1.5rem] object-cover">
+                        
+                        <!-- Floating Badge -->
+                        <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl flex items-center gap-4 animate-float border border-gray-100">
+                            <div class="bg-brand-gold p-4 rounded-full text-brand-dark">
+                                <i class="fas fa-award text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-2xl text-gray-800">100%</p>
+                                <p class="text-gray-500 text-sm font-medium">Dedication</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Academics Section -->
+    <section id="academics" class="py-24 bg-brand-dark relative text-white">
+        <!-- Decorative SVG background -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <h4 class="text-brand-gold font-bold tracking-widest uppercase mb-3">Academic Excellence</h4>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold mb-6">CBSE Curriculum</h2>
+                <p class="text-gray-300 text-lg">We offer a structured, progressive learning environment divided into key stages to maximize student potential.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-16 h-16 bg-gradient-to-br from-brand-primary to-brand-light rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-lg">
+                        <i class="fas fa-shapes"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Early Years</h3>
+                    <p class="text-gray-400 mb-6">Nursery & Playgroup focus on sensory-motor skills, play-way methods, and foundational literacy in a safe, colorful setting.</p>
+                    <ul class="text-gray-300 space-y-2 text-sm">
+                        <li><i class="fas fa-check text-brand-gold mr-2"></i> Activity-based learning</li>
+                        <li><i class="fas fa-check text-brand-gold mr-2"></i> Child-centric approach</li>
+                    </ul>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="bg-gradient-to-b from-brand-primary/40 to-brand-dark border border-brand-primary/50 rounded-2xl p-8 hover:border-brand-primary transition duration-300 transform hover:-translate-y-2 reveal shadow-[0_0_30px_rgba(30,58,138,0.3)]">
+                    <div class="w-16 h-16 bg-brand-gold text-brand-dark rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-lg">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Middle School</h3>
+                    <p class="text-gray-300 mb-6">Classes 1 to 8 transition into structured subjects, inquiry-based learning, Maths labs, and language proficiency.</p>
+                    <ul class="text-gray-300 space-y-2 text-sm">
+                        <li><i class="fas fa-check text-brand-gold mr-2"></i> English & Hindi Language Labs</li>
+                        <li><i class="fas fa-check text-brand-gold mr-2"></i> Co-curricular integration</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-16 h-16 bg-gradient-to-br from-brand-primary to-brand-light rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-lg">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Senior Secondary</h3>
+                    <p class="text-gray-400 mb-6">Classes 9 to 12 prepare students for board exams with specialized streams (PCM, PCB, Commerce, Arts) and career guidance.</p>
+                    <ul class="text-gray-300 space-y-2 text-sm">
+                        <li><i class="fas fa-check text-brand-gold mr-2"></i> Advanced Science Labs</li>
+                        <li><i class="fas fa-check text-brand-gold mr-2"></i> Board exam preparation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campus Gallery Section -->
+    <section id="gallery" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div class="max-w-2xl">
+                    <h4 class="text-brand-primary font-bold tracking-widest uppercase mb-2">Campus View</h4>
+                    <h2 class="font-serif text-4xl font-bold text-gray-900">Modern Infrastructure</h2>
+                </div>
+                <button class="mt-6 md:mt-0 px-6 py-2 border-2 border-brand-primary text-brand-primary rounded-full hover:bg-brand-primary hover:text-white transition font-bold">
+                    View Full Gallery
+                </button>
+            </div>
+
+            <!-- REPLACE ALL SRC LINKS WITH REAL PHOTOS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Image 1 -->
+                <div class="group relative overflow-hidden rounded-2xl h-80 reveal cursor-pointer shadow-md hover:shadow-xl transition">
+                    <img src="https://placehold.co/600x800/1e3a8a/ffffff?text=Real+School+Building" alt="School Building" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/20 to-transparent flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition duration-300">
+                        <h3 class="text-xl font-bold text-white mb-1">Main Campus</h3>
+                        <p class="text-gray-300 text-sm">NH-68, Baldev Nagar</p>
+                    </div>
+                </div>
+
+                <!-- Image 2 -->
+                <div class="group relative overflow-hidden rounded-2xl h-80 reveal cursor-pointer shadow-md hover:shadow-xl transition delay-100">
+                    <img src="https://placehold.co/800x600/e11d48/ffffff?text=Real+Classroom" alt="Classroom" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/20 to-transparent flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition duration-300">
+                        <h3 class="text-xl font-bold text-white mb-1">Smart Classrooms</h3>
+                        <p class="text-gray-300 text-sm">Interactive learning tech</p>
+                    </div>
+                </div>
+
+                <!-- Image 3 -->
+                <div class="group relative overflow-hidden rounded-2xl h-80 reveal cursor-pointer shadow-md hover:shadow-xl transition delay-200">
+                    <img src="https://placehold.co/800x600/fbbf24/ffffff?text=Real+Sports+Ground" alt="Sports" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/90 via-brand-dark/20 to-transparent flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition duration-300">
+                        <h3 class="text-xl font-bold text-white mb-1">Sports Ground</h3>
+                        <p class="text-gray-300 text-sm">Mandatory sports activities</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-brand-dark rounded-[2.5rem] shadow-2xl overflow-hidden reveal">
+                <div class="grid grid-cols-1 lg:grid-cols-2">
+                    
+                    <!-- Form Side -->
+                    <div class="p-10 lg:p-16 bg-white rounded-r-[2.5rem] lg:rounded-r-none lg:rounded-l-[2.5rem]">
+                        <h4 class="text-brand-primary font-bold tracking-widest uppercase mb-2">Admissions</h4>
+                        <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-900 mb-8">Enquire Now</h2>
+                        
+                        <form id="contactForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Student Name</label>
+                                    <input type="text" class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition" required placeholder="Enter name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Parent Phone</label>
+                                    <input type="tel" class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition" required placeholder="+91">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Class Applying For</label>
+                                <select class="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition" required>
+                                    <option value="">Select Class</option>
+                                    <option>Nursery / Playgroup</option>
+                                    <option>Primary (1st - 5th)</option>
+                                    <option>Middle (6th - 8th)</option>
+                                    <option>Secondary (9th - 10th)</option>
+                                    <option>Sr. Secondary (11th - 12th)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-primary hover:bg-blue-800 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+                                Submit Enquiry
+                            </button>
+                            
+                            <!-- Custom Message Box instead of alert -->
+                            <div id="formSuccess" class="hidden mt-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl flex items-center gap-3">
+                                <i class="fas fa-check-circle text-xl"></i>
+                                <div>
+                                    <p class="font-bold">Message Sent Successfully!</p>
+                                    <p class="text-sm">Our admissions team will contact you shortly.</p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Info Side -->
+                    <div class="p-10 lg:p-16 text-white flex flex-col justify-center relative overflow-hidden">
+                        <!-- BG shape -->
+                        <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-brand-primary rounded-full mix-blend-screen filter blur-3xl opacity-50 pointer-events-none"></div>
+
+                        <h3 class="font-serif text-3xl font-bold mb-8">Contact Info</h3>
+                        
+                        <div class="space-y-8">
+                            <div class="flex items-start gap-5">
+                                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-brand-gold shrink-0 backdrop-blur-sm border border-white/20">
+                                    <i class="fas fa-map-marker-alt text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-white">Campus Location</h4>
+                                    <p class="text-gray-300 mt-1 leading-relaxed">NH-68, Opposite Canara Bank,<br>Baldev Nagar, Barmer,<br>Rajasthan - 344001</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-5">
+                                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-brand-gold shrink-0 backdrop-blur-sm border border-white/20">
+                                    <i class="fas fa-phone-alt text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-white">Phone Numbers</h4>
+                                    <p class="text-gray-300 mt-1">+91 9460227273<br>+91 8890230875</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-5">
+                                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-brand-gold shrink-0 backdrop-blur-sm border border-white/20">
+                                    <i class="fas fa-clock text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-white">School Hours</h4>
+                                    <p class="text-gray-300 mt-1">Mon - Sat: 7:30 AM - 1:30 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-950 text-gray-400 py-16 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-2 lg:col-span-1">
+                    <a href="#" class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-brand-primary flex items-center justify-center text-white font-bold">DD</div>
+                        <span class="font-serif font-bold text-xl text-white">Daisy Days</span>
+                    </a>
+                    <p class="text-sm mb-6 leading-relaxed">Managed by Jahanvi Sansthan, fostering modern leadership with traditional values in Barmer.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.youtube.com/channel/UCp9iYUVmYrZH1VLCfjH7eqw/videos" target="_blank" class="w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-red-600 hover:text-white transition"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center hover:bg-pink-600 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Quick Links</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#home" class="hover:text-brand-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i>Home</a></li>
+                        <li><a href="#about" class="hover:text-brand-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i>About Us</a></li>
+                        <li><a href="#academics" class="hover:text-brand-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i>Academics</a></li>
+                        <li><a href="#gallery" class="hover:text-brand-gold transition flex items-center"><i class="fas fa-chevron-right text-[10px] mr-2"></i>Gallery</a></li>
+                    </ul>
+                </div>
+
+                <!-- Streams -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Streams Offered</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-center"><i class="fas fa-atom text-brand-primary mr-3"></i> Science (PCM)</li>
+                        <li class="flex items-center"><i class="fas fa-dna text-brand-primary mr-3"></i> Science (PCB)</li>
+                        <li class="flex items-center"><i class="fas fa-calculator text-brand-primary mr-3"></i> Commerce</li>
+                        <li class="flex items-center"><i class="fas fa-palette text-brand-primary mr-3"></i> Arts</li>
+                    </ul>
+                </div>
+
+                <!-- Affiliation -->
+                <div>
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Recognitions</h4>
+                    <div class="bg-gray-900 border border-gray-800 p-5 rounded-xl">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-certificate text-brand-gold text-2xl"></i>
+                            <p class="font-bold text-white">CBSE Affiliated</p>
+                        </div>
+                        <p class="text-xs mt-2 text-gray-500">Established 2015</p>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="border-t border-gray-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-xs">
+                <p>&copy; 2026 Daisy Days International School, Barmer. All rights reserved.</p>
+                <div class="mt-4 md:mt-0 space-x-4">
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Navigation Scroll Effect ---
+        const navbar = document.getElementById('navbar');
+        const navText = document.getElementById('nav-text');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass-dark');
+                navbar.classList.remove('top-[36px]');
+                navbar.classList.add('top-0');
+            } else {
+                navbar.classList.remove('glass-dark');
+                navbar.classList.add('top-[36px]');
+                navbar.classList.remove('top-0');
+            }
+        });
+
+        // --- Mobile Menu Toggle ---
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const mobileLinks = menu.querySelectorAll('a');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // --- Form Handling (No alerts) ---
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const successMsg = document.getElementById('formSuccess');
+            successMsg.classList.remove('hidden');
+            this.reset();
+            setTimeout(() => {
+                successMsg.classList.add('hidden');
+            }, 5000);
+        });
+
+        // --- Scroll Reveal Animation ---
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger once on load
+
+        // --- THREE.JS 3D BACKGROUND ANIMATION ---
+        // Setup scene, camera, renderer
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        
+        // Add subtle fog to blend into background
+        scene.fog = new THREE.FogExp2(0x0a192f, 0.002);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Create Particles / "Knowledge Nodes"
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 700; // Number of floating objects
+        
+        const posArray = new Float32Array(particlesCount * 3);
+        const colorsArray = new Float32Array(particlesCount * 3);
+
+        const color1 = new THREE.Color(0x3b82f6); // Brand Light Blue
+        const color2 = new THREE.Color(0xfbbf24); // Brand Gold
+
+        for(let i = 0; i < particlesCount * 3; i+=3) {
+            // Position
+            posArray[i] = (Math.random() - 0.5) * 20; // x
+            posArray[i+1] = (Math.random() - 0.5) * 20; // y
+            posArray[i+2] = (Math.random() - 0.5) * 15; // z
+
+            // Color mix
+            const mixedColor = color1.clone().lerp(color2, Math.random());
+            colorsArray[i] = mixedColor.r;
+            colorsArray[i+1] = mixedColor.g;
+            colorsArray[i+2] = mixedColor.b;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorsArray, 3));
+
+        // Material for particles
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+
+        // Mesh
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Add some larger floating geometric shapes (Representing education/building blocks)
+        const geometries = [
+            new THREE.IcosahedronGeometry(0.5, 0),
+            new THREE.TorusGeometry(0.3, 0.1, 16, 32),
+            new THREE.OctahedronGeometry(0.4, 0)
+        ];
+        
+        const shapes = [];
+        const shapesMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x1e3a8a, 
+            wireframe: true, 
+            transparent: true, 
+            opacity: 0.3 
+        });
+
+        for(let i=0; i<15; i++) {
+            const geo = geometries[Math.floor(Math.random() * geometries.length)];
+            const mesh = new THREE.Mesh(geo, shapesMaterial);
+            mesh.position.set(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 10
+            );
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+            
+            // Random rotation speeds
+            mesh.userData = {
+                rx: (Math.random() - 0.5) * 0.02,
+                ry: (Math.random() - 0.5) * 0.02
+            };
+            
+            scene.add(mesh);
+            shapes.push(mesh);
+        }
+
+        camera.position.z = 5;
+
+        // Mouse Interaction Logic
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            // Slowly rotate the entire particle system
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.0005;
+
+            // Interactive parallax effect based on mouse
+            particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
+            particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
+            
+            // Subtle wave movement for particles
+            const positions = particlesGeometry.attributes.position.array;
+            for(let i = 0; i < particlesCount; i++) {
+                const i3 = i * 3;
+                const x = positions[i3];
+                // subtle vertical wave based on x position and time
+                positions[i3 + 1] += Math.sin(elapsedTime + x) * 0.001; 
+            }
+            particlesGeometry.attributes.position.needsUpdate = true;
+
+            // Rotate geometric shapes
+            shapes.forEach(shape => {
+                shape.rotation.x += shape.userData.rx;
+                shape.rotation.y += shape.userData.ry;
+                // Add slight hover to shapes
+                shape.position.y += Math.sin(elapsedTime * 2 + shape.position.x) * 0.002;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start animation after window loads
+        window.onload = function() {
+            animate();
+        };
+    </script>
+</body>
+</html>
