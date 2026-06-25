@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daisy Days International School | Barmer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a8a', // Deep Blue
+                        secondary: '#fbbf24', // Amber/Gold
+                        accent: '#e11d48', // Rose/Red for highlights
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom Styles for animations and specific touches */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .hero-overlay {
+            background: linear-gradient(to right, rgba(30, 58, 138, 0.9), rgba(30, 58, 138, 0.4));
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased bg-gray-50">
+
+    <!-- Top Bar (Contact Info) -->
+    <div class="bg-primary text-white text-xs md:text-sm py-2 px-4 hidden md:block">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex space-x-6">
+                <span><i class="fas fa-phone-alt mr-2 text-secondary"></i> +91 9460227273 / 8890230875</span>
+                <span><i class="fas fa-envelope mr-2 text-secondary"></i> info@daisydaysbarmer.com</span>
+                <span><i class="fas fa-map-marker-alt mr-2 text-secondary"></i> NH-68, Baldev Nagar, Barmer</span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-secondary transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="hover:text-secondary transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-secondary transition"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="sticky top-0 z-50 glass-nav transition-all duration-300 w-full" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center gap-3 group">
+                        <!-- Placeholder Logo - Replaced with an icon for now -->
+                        <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white text-xl font-bold shadow-md group-hover:bg-secondary group-hover:text-primary transition">
+                            DD
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-serif font-bold text-xl md:text-2xl text-primary leading-tight">Daisy Days</span>
+                            <span class="text-[10px] md:text-xs font-semibold text-gray-500 uppercase tracking-wider">International School</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-primary font-medium transition border-b-2 border-transparent hover:border-secondary">Home</a>
+                    <a href="#about" class="text-gray-700 hover:text-primary font-medium transition border-b-2 border-transparent hover:border-secondary">About Us</a>
+                    <a href="#academics" class="text-gray-700 hover:text-primary font-medium transition border-b-2 border-transparent hover:border-secondary">Academics</a>
+                    <a href="#facilities" class="text-gray-700 hover:text-primary font-medium transition border-b-2 border-transparent hover:border-secondary">Facilities</a>
+                    <a href="#contact" class="text-gray-700 hover:text-primary font-medium transition border-b-2 border-transparent hover:border-secondary">Contact</a>
+                    <a href="#admissions" class="bg-primary hover:bg-blue-800 text-white px-6 py-2 rounded-full font-medium shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">Admission Open</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-primary focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#home" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Home</a>
+                <a href="#about" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">About Us</a>
+                <a href="#academics" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Academics</a>
+                <a href="#facilities" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Facilities</a>
+                <a href="#contact" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Contact</a>
+                <a href="#admissions" class="block px-3 py-3 mt-4 text-center text-base font-medium bg-primary text-white rounded-md">Admission Open</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="relative h-[85vh] flex items-center justify-center overflow-hidden">
+        <!-- Background Image (High quality school representative image) -->
+        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+             alt="Students at Daisy Days" 
+             class="absolute inset-0 w-full h-full object-cover z-0"
+             onerror="this.src='https://placehold.co/1920x1080/1e3a8a/ffffff?text=Daisy+Days+Campus'">
+        
+        <!-- Overlay -->
+        <div class="absolute inset-0 hero-overlay z-10"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white w-full">
+            <div class="max-w-2xl animate-fade-in-up">
+                <div class="inline-block bg-secondary text-primary font-bold px-4 py-1 rounded-full text-sm mb-6 uppercase tracking-wide">
+                    CBSE Affiliated School
+                </div>
+                <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                    Nurturing Minds,<br> <span class="text-secondary">Shaping the Future.</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-xl font-light">
+                    Welcome to Daisy Days International School, Barmer. Providing world-class holistic education and fostering modern leadership with traditional values.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#about" class="bg-secondary text-primary hover:bg-yellow-300 px-8 py-3 rounded-full font-bold text-center transition shadow-lg text-lg">
+                        Discover Our School
+                    </a>
+                    <a href="#contact" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-3 rounded-full font-bold text-center transition shadow-lg text-lg">
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-12 border-b border-gray-200 relative z-30 -mt-10 mx-4 md:mx-auto max-w-6xl rounded-xl shadow-xl">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 px-8 text-center divide-y md:divide-y-0 md:divide-x divide-gray-200">
+            <div class="p-4">
+                <i class="fas fa-user-graduate text-4xl text-primary mb-3"></i>
+                <h3 class="font-bold text-2xl text-gray-800">Nursery to 12th</h3>
+                <p class="text-gray-500 text-sm mt-1">Comprehensive Education</p>
+            </div>
+            <div class="p-4">
+                <i class="fas fa-book-open text-4xl text-primary mb-3"></i>
+                <h3 class="font-bold text-2xl text-gray-800">CBSE</h3>
+                <p class="text-gray-500 text-sm mt-1">Curriculum Followed</p>
+            </div>
+            <div class="p-4">
+                <i class="fas fa-chalkboard-teacher text-4xl text-primary mb-3"></i>
+                <h3 class="font-bold text-2xl text-gray-800">Smart Classes</h3>
+                <p class="text-gray-500 text-sm mt-1">Digital Learning Ecosystem</p>
+            </div>
+            <div class="p-4">
+                <i class="fas fa-trophy text-4xl text-primary mb-3"></i>
+                <h3 class="font-bold text-2xl text-gray-800">Holistic</h3>
+                <p class="text-gray-500 text-sm mt-1">Focus on Sports & Arts</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Image Side -->
+                <div class="relative">
+                    <div class="absolute inset-0 bg-primary rounded-2xl transform translate-x-4 translate-y-4"></div>
+                    <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="School Building" 
+                         class="relative z-10 rounded-2xl shadow-xl w-full object-cover h-[500px]"
+                         onerror="this.src='https://placehold.co/800x600/e2e8f0/1e3a8a?text=School+Building'">
+                    <!-- Floating Badge -->
+                    <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-2xl z-20 flex items-center gap-4">
+                        <div class="bg-secondary p-3 rounded-full text-primary">
+                            <i class="fas fa-award text-3xl"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-xl text-gray-800">Excellence</p>
+                            <p class="text-gray-500 text-sm">in Education</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Side -->
+                <div>
+                    <h4 class="text-secondary font-bold tracking-wider uppercase mb-2">About Our Institution</h4>
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-primary mb-6">Empowering Students to Achieve Their True Potential</h2>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Located prominently on NH-68 in Baldev Nagar, Barmer, <strong>Daisy Days International School</strong> operates under the esteemed guidance of the Jahanvi Sansthan. We are dedicated to creating a vibrant, inspiring, and safe learning environment for children from their early years through senior secondary education.
+                    </p>
+                    <p class="text-gray-600 mb-8 leading-relaxed">
+                        As a CBSE-affiliated institution, we integrate traditional pedagogical approaches with modern technology. Our "House" system instills teamwork, while our state-of-the-art facilities ensure students excel not just academically, but in sports, arts, and leadership.
+                    </p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-primary mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700"><strong>Safe Environment:</strong> Secure campus located opposite Canara Bank.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-primary mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700"><strong>Expert Faculty:</strong> Highly trained and dedicated teaching staff.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-primary mt-1 mr-3 text-lg"></i>
+                            <span class="text-gray-700"><strong>Co-Curriculars:</strong> Drama, dance, debates, and extensive sports facilities.</span>
+                        </li>
+                    </ul>
+
+                    <a href="#academics" class="inline-flex items-center text-primary font-bold hover:text-blue-700 transition">
+                        Explore Our Curriculum <i class="fas fa-arrow-right ml-2 mt-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="academics" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h4 class="text-secondary font-bold tracking-wider uppercase mb-2">Academics</h4>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-primary mb-4">A Journey of Lifelong Learning</h2>
+                <p class="text-gray-600">Our CBSE curriculum is tailored to meet the developmental needs of students at every stage, fostering critical thinking, creativity, and character.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Academic Card 1 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 card-hover">
+                    <div class="w-16 h-16 bg-blue-100 text-primary rounded-2xl flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-shapes"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Pre-Primary</h3>
+                    <p class="text-gray-600 mb-4">Focusing on play-way methods, sensory motor skills, and foundational literacy in a nurturing, colorful environment.</p>
+                </div>
+                
+                <!-- Academic Card 2 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 card-hover">
+                    <div class="w-16 h-16 bg-blue-100 text-primary rounded-2xl flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Middle School</h3>
+                    <p class="text-gray-600 mb-4">Encouraging inquiry-based learning, practical scientific experiments, and deep conceptual understanding.</p>
+                </div>
+
+                <!-- Academic Card 3 -->
+                <div class="bg-gray-50 rounded-2xl p-8 border border-gray-100 card-hover">
+                    <div class="w-16 h-16 bg-blue-100 text-primary rounded-2xl flex items-center justify-center text-3xl mb-6">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Senior Secondary</h3>
+                    <p class="text-gray-600 mb-4">Rigorous academic preparation for board exams alongside career counseling and specialized streams.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="facilities" class="py-20 bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                <div class="max-w-2xl">
+                    <h4 class="text-secondary font-bold tracking-wider uppercase mb-2">Campus Life</h4>
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4">World-Class Facilities</h2>
+                    <p class="text-blue-100">Our campus in Baldev Nagar provides the perfect infrastructure to support holistic development, from smart classrooms to expansive sports arenas.</p>
+                </div>
+            </div>
+
+            <!-- Facilities Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div class="group relative overflow-hidden rounded-xl h-64">
+                    <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Library" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/2c5282/ffffff?text=Library'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-bold mb-1">Well-Stocked Library</h3>
+                    </div>
+                </div>
+
+                <div class="group relative overflow-hidden rounded-xl h-64">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Science Labs" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/2c5282/ffffff?text=Science+Lab'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-bold mb-1">Science Labs</h3>
+                    </div>
+                </div>
+
+                <div class="group relative overflow-hidden rounded-xl h-64">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Smart Classrooms" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/2c5282/ffffff?text=Smart+Class'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-bold mb-1">Smart Classrooms</h3>
+                    </div>
+                </div>
+
+                <div class="group relative overflow-hidden rounded-xl h-64">
+                    <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sports Grounds" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" onerror="this.src='https://placehold.co/600x400/2c5282/ffffff?text=Sports+Ground'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <h3 class="text-xl font-bold mb-1">Sports Facilities</h3>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 bg-gray-50 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2">
+                    
+                    <!-- Contact Form -->
+                    <div class="p-10 lg:p-16">
+                        <h4 class="text-secondary font-bold tracking-wider uppercase mb-2">Admissions Open</h4>
+                        <h2 class="font-serif text-3xl font-bold text-primary mb-6">Get in Touch</h2>
+                        <p class="text-gray-600 mb-8">Fill out the form below for admission inquiries or general questions. Our administration team will get back to you shortly.</p>
+                        
+                        <form onsubmit="handleForm(event)" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Parent's Name</label>
+                                    <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required placeholder="+91 XXXXX XXXXX">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Student's Class Seeking Admission</label>
+                                <select class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" required>
+                                    <option value="">Select Class</option>
+                                    <option>Pre-Primary (Nursery/KG)</option>
+                                    <option>Primary (1st to 5th)</option>
+                                    <option>Middle (6th to 8th)</option>
+                                    <option>Secondary (9th to 10th)</option>
+                                    <option>Senior Secondary (11th to 12th)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Message (Optional)</label>
+                                <textarea rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="How can we help you?"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-blue-800 text-white font-bold py-4 rounded-lg shadow-md hover:shadow-lg transition">
+                                Submit Inquiry
+                            </button>
+                            <p id="form-msg" class="text-green-600 font-medium hidden mt-2 text-center">Thank you! Your message has been sent.</p>
+                        </form>
+                    </div>
+
+                    <!-- Contact Details & Map -->
+                    <div class="bg-gray-100 p-10 lg:p-16 flex flex-col justify-center">
+                        <h3 class="font-serif text-2xl font-bold text-gray-800 mb-6">Contact Information</h3>
+                        
+                        <div class="space-y-6 mb-8">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm shrink-0">
+                                    <i class="fas fa-map-marker-alt text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold text-gray-800">Campus Address</h4>
+                                    <p class="text-gray-600 mt-1">Daisy Days International School,<br>NH-68, Opp. Canara Bank,<br>Baldev Nagar, Barmer, Rajasthan 344001</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm shrink-0">
+                                    <i class="fas fa-phone-alt text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold text-gray-800">Phone</h4>
+                                    <p class="text-gray-600 mt-1">+91 9460227273<br>+91 8890230875</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm shrink-0">
+                                    <i class="fas fa-clock text-xl"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-bold text-gray-800">Office Hours</h4>
+                                    <p class="text-gray-600 mt-1">Monday - Saturday<br>8:00 AM - 2:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Map Placeholder -->
+                        <div class="w-full h-48 bg-gray-300 rounded-xl overflow-hidden relative shadow-inner">
+                            <!-- In a real scenario, embed a Google Map iframe here -->
+                            <div class="absolute inset-0 flex items-center justify-center bg-gray-200">
+                                <div class="text-center text-gray-500">
+                                    <i class="fas fa-map-marked-alt text-3xl mb-2"></i>
+                                    <p>Interactive Map View</p>
+                                    <p class="text-xs mt-1">NH-68, Baldev Nagar, Barmer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-300 py-12 border-t-4 border-secondary">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-2 lg:col-span-1">
+                    <a href="#" class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-primary font-bold">
+                            DD
+                        </div>
+                        <span class="font-serif font-bold text-xl text-white">Daisy Days</span>
+                    </a>
+                    <p class="text-sm mb-6 leading-relaxed">Providing high-quality education and fostering holistic growth in Barmer under the Jahanvi Sansthan.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-secondary hover:text-primary transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-secondary hover:text-primary transition"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#home" class="hover:text-secondary transition">Home</a></li>
+                        <li><a href="#about" class="hover:text-secondary transition">About Us</a></li>
+                        <li><a href="#academics" class="hover:text-secondary transition">Academics</a></li>
+                        <li><a href="#facilities" class="hover:text-secondary transition">Facilities</a></li>
+                        <li><a href="#admissions" class="hover:text-secondary transition">Admissions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Information -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Information</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-secondary transition">Mandatory Public Disclosure</a></li>
+                        <li><a href="#" class="hover:text-secondary transition">CBSE Guidelines</a></li>
+                        <li><a href="#" class="hover:text-secondary transition">Fee Structure</a></li>
+                        <li><a href="#" class="hover:text-secondary transition">Academic Calendar</a></li>
+                        <li><a href="#" class="hover:text-secondary transition">Career / Vacancies</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal / Footer info -->
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Affiliation</h4>
+                    <div class="bg-gray-800 p-4 rounded-lg inline-block border border-gray-700">
+                        <p class="text-sm font-semibold text-white mb-1">CBSE Affiliated</p>
+                        <p class="text-xs text-gray-400">Run by Jahanvi Sansthan</p>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+                <p>&copy; 2026 Daisy Days International School, Barmer. All rights reserved.</p>
+                <div class="mt-4 md:mt-0 space-x-4">
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Form handling simulation to avoid alert()
+        function handleForm(e) {
+            e.preventDefault();
+            const msg = document.getElementById('form-msg');
+            msg.classList.remove('hidden');
+            e.target.reset();
+            setTimeout(() => {
+                msg.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const menuLinks = menu.querySelectorAll('a');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when a link is clicked
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar styling on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-md');
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
